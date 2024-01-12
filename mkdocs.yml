@@ -1,0 +1,28 @@
+site_name: NOAA Omics Data Management Guide
+theme:
+  name: readthedocs
+  highlightjs: true
+extra_css: [style_2.css]
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        # See: https://mkdocstrings.github.io/python/usage/
+        python:
+          options:
+            docstring_style: sphinx
+markdown_extensions:
+  - markdown_include.include:
+      base_path: .
+  - admonition
+nav:
+  - Home: 'index.md'
+  - 'Getting Started': 'getting-started.md'
+  - 'Data Management Plans': 'dmp-template.md'
+  - 'Study Data Templates': 'study-data-templates.md'
+  - 'Metadata Guidelines': 'metadata-guidelines.md'
+  - 'Omics Data Guidelines': 'omics-data-guidelines.md'
+  - 'Open Science Principles': 'open-science.md'
+  - 'Contributors': 'contributors.md'
+use_directory_urls: false
+
