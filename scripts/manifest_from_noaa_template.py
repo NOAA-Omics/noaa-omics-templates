@@ -81,6 +81,8 @@ if args.paired:
     man_pe['absolute-filepath'] = args.path + '/'+man_pe['absolute-filepath'].astype(str)
     man_pe = man_pe.rename(columns={'sample_name': 'sample-id'})
 
+    man_pe = man_pe.iloc[:,[0,2,1]]
+
     man_pe.to_csv(args.output_prefix+'manifest_pe.csv',index=False)
 
     #print SE manifest
@@ -92,6 +94,8 @@ else:
     man_se = man_se.rename(columns={'sample_name': 'sample-id', 'filename': 'absolute-filepath'})
     man_se['direction'] = 'forward'
     man_se['absolute-filepath'] = args.path + '/'+man_se['absolute-filepath'].astype(str)
+
+    man_se = man_se.iloc[:,[0,2,1]]
 
     man_se.to_csv(args.output_prefix+'manifest_se.csv',index=False)
 
