@@ -1,6 +1,10 @@
 # NOAA Omics Study Data Templates  
 
-add diagram
+add diagram  
+
+## General Guidelines  
+
+Color coding  
 
 | Sheets | Sheet definitions |
 |---|---|
