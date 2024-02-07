@@ -1,1 +1,3 @@
-# sample_data sheet
+# sample_data sheet  
+
+## What constitutes a sample?  
