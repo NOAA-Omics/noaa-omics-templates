@@ -1,7 +1,10 @@
 # sample_data Sheet 
 
-Contextual data about the samples collected, such as when it was collected, where it was collected from, what kind of sample it is, and what were the properties of the environment or experimental condition from which the sample was taken. Each row is a distinct sample. Most of this information is recorded during sample collection. Many terms have controlled vocabulary, such as organism, env_broad_scale, waterBody. This file contains information that is submitted to NCBI when generating a BioSample. Other important fields for metadata processing include amplicon_sequenced, which helps to link together different types of metdata. These are the general terms for all eDNA sample_data sheets. Specific terms for different environments are listed below.
+Contextual data about the samples collected, such as when it was collected, where it was collected from, what kind of sample it is, and what were the properties of the environment or experimental condition from which the sample was taken. Each row is a distinct sample. Most of this information is recorded during sample collection. Many terms have controlled vocabulary, such as organism, env_broad_scale, waterBody. This file contains information that is submitted to NCBI when generating a BioSample. Other important fields for metadata processing include amplicon_sequenced, which helps to link together different types of metdata. 
 
+## Terms
+
+These are the general terms for all eDNA sample_data sheets. Specific terms for different environments are listed below.
 
 | Term | Definition | Required by |
 |---|---|---|
@@ -51,7 +54,7 @@ Contextual data about the samples collected, such as when it was collected, wher
 | [collection_method](https://noaa-omics-templates.readthedocs.io/en/latest/terms/sample_data/collection_method.html) | The name of, reference to, or description of the method or protocol used during a sampling Event. https://dwc.tdwg.org/terms/#dwc:samplingProtocol | Recommended |
 | [basisOfRecord](https://noaa-omics-templates.readthedocs.io/en/latest/terms/sample_data/basisOfRecord.html) | The specific nature of the data record - a subtype of the dcterms:type. For DNA-derived occurrences, (see Category I and Category III) use MaterialSample. For enriched occurrences use PreservedSpecimen or LivingSpecimen as appropriate. https://docs.gbif-uat.org/publishing-dna-derived-data/1.0/en/#mapping-metabarcoding-edna-and-barcoding-data | Recommended |
 
-## water_sample_data specific terms
+### water_sample_data specific terms
 
 | Term | Definition | Required by |
 |---|---|---|
