@@ -2,7 +2,7 @@
 
 *Description of the sample*
 
-Origin: AOML
+Origin: NCBI
 
 Example: None
 

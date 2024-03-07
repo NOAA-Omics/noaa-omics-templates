@@ -2,7 +2,7 @@
 
 *BioSample accession from NCBI, provided after creating a biosample on NCBI, such as during the SRA submission process*
 
-Origin: AOML
+Origin: NCBI
 
 Example: None
 

@@ -2,7 +2,7 @@
 
 *Title of the Biosample when seen on NCBI. Suggest a short descriptive name.*
 
-Origin: AOML
+Origin: NCBI
 
 Example: Gulf of Mexico seawater eDNA from 38.8 m
 

@@ -2,7 +2,7 @@
 
 *The accession number of the BioProject(s) to which the BioSample belongs. If the BioSample belongs to more than one BioProject, enter multiple bioproject_accession columns. A valid BioProject accession has prefix PRJN, PRJE or PRJD, e.g., PRJNA12345.*
 
-Origin: AOML
+Origin: NCBI
 
 Example: PRJNA12345
 

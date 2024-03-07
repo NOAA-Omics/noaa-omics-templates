@@ -2,7 +2,7 @@
 
 *unique identifier assigned to a material sample used for extracting nucleic acids, and subsequent sequencing. The identifier can refer either to the original material collected or to any derived sub-samples.*
 
-Origin: AOML
+Origin: [MIXS:0000026](https://w3id.org/mixs/0000026)
 
 Example: None
 

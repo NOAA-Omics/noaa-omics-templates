@@ -2,7 +2,7 @@
 
 *The name of, reference to, or description of the method or protocol used during a sampling Event. https://dwc.tdwg.org/terms/#dwc:samplingProtocol*
 
-Origin: AOML
+Origin: [MIXS:0001225](https://genomicsstandardsconsortium.github.io/mixs/0001225/)
 
 Example: CTD rosette
 

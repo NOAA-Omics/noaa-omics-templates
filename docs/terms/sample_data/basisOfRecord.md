@@ -2,7 +2,7 @@
 
 *The specific nature of the data record - a subtype of the dcterms:type. For DNA-derived occurrences, (see Category I and Category III) use MaterialSample. For enriched occurrences use PreservedSpecimen or LivingSpecimen as appropriate. https://docs.gbif-uat.org/publishing-dna-derived-data/1.0/en/#mapping-metabarcoding-edna-and-barcoding-data*
 
-Origin: AOML
+Origin: [DwC](https://dwc.tdwg.org/list/)
 
 Example: MaterialSample
 
