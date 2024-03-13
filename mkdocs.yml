@@ -16,8 +16,9 @@ markdown_extensions:
       base_path: .
   - admonition
 nav:
-  - Home: 'index.md'
-  - 'Study Data Templates': 'study-data-templates.md'
+  - 'Study Data Templates' : 'index.md'
+  - 'NCBI Submission Instructions': 'ncbi.md'
+  - 'OBIS/GBIF Submission Instructions': 'obis.md
   - 'Contributors': 'contributors.md'
 use_directory_urls: false
 
