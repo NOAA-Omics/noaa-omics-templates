@@ -2,7 +2,7 @@
 
 *Short unique identifier for the sequencing library. Each library_ID must be unique!*
 
-Origin: AOML
+Origin: NCBI
 
 Example: Pisces16S_113
 

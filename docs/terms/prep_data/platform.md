@@ -2,7 +2,7 @@
 
 *None*
 
-Origin: AOML
+Origin: NCBI
 
 Example: ILLUMINA
 

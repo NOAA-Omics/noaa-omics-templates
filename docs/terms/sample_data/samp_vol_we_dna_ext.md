@@ -6,6 +6,6 @@ Origin: [MIXS:0000111](https://w3id.org/mixs/0000111)
 
 Example: 1100.0
 
-Sheet(s) containing term: sample_data | prep_data
+Sheet(s) containing term: sample_data
 
 **Not required, but recommended by NOAA Omics**

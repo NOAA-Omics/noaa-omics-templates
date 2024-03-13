@@ -3,7 +3,7 @@
 *Link to public repository where analysis code is archived 
 Converted to identificationReferences for Dwc*
 
-Origin: AOML
+Origin: [AOML, DwC](https://dwc.tdwg.org/list/)
 
 Example: https://github.com/aomlomics/gomecc
 

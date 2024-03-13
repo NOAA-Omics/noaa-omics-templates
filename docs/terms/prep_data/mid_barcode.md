@@ -3,7 +3,7 @@
 *Molecular barcodes, called Multiplex Identifiers (MIDs), that are used to specifically tag unique samples in a sequencing run. Sequence should be reported in uppercase letters.
 MIXS term: mid*
 
-Origin: AOML
+Origin: [MIXS:0000047](https://w3id.org/mixs/0000047)
 
 Example: None
 

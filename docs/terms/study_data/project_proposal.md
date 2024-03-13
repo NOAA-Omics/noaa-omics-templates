@@ -1,10 +1,10 @@
 # Term: project_proposal
 
-*Link to internal project proposal*
+*Internal link to project proposal*
 
 Origin: AOML
 
-Example: https://drive.google.com/file/d/1ySVSpAhyB5M5xsu9LCal8JRoiK-sJHWa
+Example: link
 
 Sheet(s) containing term: study_data
 
