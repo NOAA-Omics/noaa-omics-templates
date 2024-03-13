@@ -18,7 +18,7 @@ markdown_extensions:
 nav:
   - 'Study Data Templates' : 'index.md'
   - 'NCBI Submission Instructions': 'ncbi.md'
-  - 'OBIS/GBIF Submission Instructions': 'obis.md
+  - 'OBIS/GBIF Submission Instructions': 'obis.md'
   - 'Contributors': 'contributors.md'
 use_directory_urls: false
 
