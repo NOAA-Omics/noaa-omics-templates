@@ -3,8 +3,7 @@
 
 These NOAA Omics study data templates were developed based on feedback from NOAA partners at AOML, PMEL, and the NOAA Omics Data and Bioinformatics Supergroup. This template incorporates data standards from [MIxS](https://github.com/aomlomics/omics-data-management/wiki/3-Study-Data-Templates#sample-metadata-templates), [Darwin Core](https://dwc.tdwg.org/terms/), and custom recommended NOAA fields to facilitate data management of a range of omics sample types, from project initiation through data submission. Currently, we provide templates for eDNA survey studies ([MIMARKS Survey](https://www.ncbi.nlm.nih.gov/biosample/docs/packages/)) in three environments: water, sediment, and host-associated. Additional templates are in development to cover other data types and environments. If you are interested in developing a NOAA Omics template for your data/environment type, please reach out to katherine.silliman@noaa.gov!
 
-add diagram  
-
+![DMG fig](assets/SDMS2.png)
 
 ## General Guidelines  
 
