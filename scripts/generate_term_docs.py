@@ -7,9 +7,10 @@ def read_excel_file(file_path):
     ws = wb.active
 
     data = {}
-    r= 2
+    #skips the 1st 2 rows
+    r= 3
 
-    for row in ws.iter_rows(min_row=2, values_only=True):
+    for row in ws.iter_rows(min_row=3, values_only=True):
         if row[0] is not None:
             key = row[0]
             hyperlink_text = row[4]
@@ -40,40 +41,17 @@ def write_mds(data, folder_name):
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)
     for key, value in data.items():
+        sheets_dict = {}
         if '|' in value['sheet']:
-            sheet_folder1 = value['sheet'].split(" | ")[0]
-            sheet_folder1 = os.path.join(folder_name,sheet_folder1)
-            sheet_folder2 = value['sheet'].split(" | ")[1]
-            sheet_folder2 = os.path.join(folder_name,sheet_folder2)
+            sheets = value['sheet'].split(" | ")
+            for s in sheets:
+                sheets_dict[s] = os.path.join(folder_name,s)
         else:
-            sheet_folder1 = os.path.join(folder_name, f"{value['sheet']}")
-            sheet_folder2 = None
-        if not os.path.exists(sheet_folder1):
-            os.makedirs(sheet_folder1)
-        file_name = os.path.join(sheet_folder1, f"{key}.md")
-        with open(file_name, 'w') as file:
-            file.write(f"# Term: {key}\n\n")
-            file.write(f"*{value['definition']}*\n\n")
-            if value['origin_link'] == None:
-                file.write(f"Origin: {value['origin_text']}\n\n")
-            else:
-                file.write(f"Origin: [{value['origin_text']}]({value['origin_link']})\n\n")
-            file.write(f"Example: {value['example']}\n\n")
-            file.write(f"Sheet(s) containing term: {value['sheet']}\n\n")
-            if value['required_by'] == 'NCBI+OBIS':
-                file.write("**Required by NCBI and OBIS**")
-            elif value['required_by'] == 'Optional':
-                file.write("**Optional or context dependent**")
-            elif value['required_by'] == 'Recommended':
-                file.write("**Not required, but recommended by NOAA Omics**")
-            elif value['required_by'] == 'NCBI':
-                file.write("**Required by NCBI**")
-            elif value['required_by'] == 'OBIS':
-                file.write("**Required by OBIS**")
-        if sheet_folder2 != None:
-            if not os.path.exists(sheet_folder2):
-                os.makedirs(sheet_folder2)
-            file_name = os.path.join(sheet_folder2, f"{key}.md")
+            sheets_dict[value['sheet']] = os.path.join(folder_name, f"{value['sheet']}")
+        for s in sheets_dict.keys():
+            if not os.path.exists(sheets_dict[s]):
+                os.makedirs(sheets_dict[s])
+            file_name = os.path.join(sheets_dict[s], f"{key}.md")
             with open(file_name, 'w') as file:
                 file.write(f"# Term: {key}\n\n")
                 file.write(f"*{value['definition']}*\n\n")
@@ -98,7 +76,7 @@ def write_mds(data, folder_name):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python script.py <file_path> <output_folder>")
+        print("Usage: python generate_term_docs.py <file_path> <output_folder>")
     else:
         file_path = sys.argv[1]
         folder_name = sys.argv[2]
