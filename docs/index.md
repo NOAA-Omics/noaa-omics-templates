@@ -55,7 +55,7 @@ There are some shared fields between the sheets, which enable processing by the 
 
 | Environment | Term definitions | Blank Template link  | Example Template |
 |---|---|---|---|
-| Water | [Water template terms](https://noaa-omics-templates.readthedocs.io/en/latest/water-edna-template.html) | [NOAA_MIMARKS.survey.water.6.0](https://docs.google.com/spreadsheets/d/1YBXFU9PuMqm7IT1tp0LTxQ1v2j0tlCWFnhSpy-EBwPw/edit?usp=sharing) | [gomecc4_example](https://docs.google.com/spreadsheets/d/1b7m5u7Cqj-L6vJYk81CHHDNNXftr3JRNCpGgcVJtCEE/edit?usp=drive_link) |
+| Water | [Water template terms](https://noaa-omics-templates.readthedocs.io/en/latest/water-edna-template.html) | [NOAA_MIMARKS.survey.water.6.0](https://docs.google.com/spreadsheets/d/1YBXFU9PuMqm7IT1tp0LTxQ1v2j0tlCWFnhSpy-EBwPw/edit?usp=sharing) | [gomecc4_example](https://docs.google.com/spreadsheets/d/1JPA94BsYiVI8FhGYIzxVuYcxxqrgMdoNjlyMZPNcHjk/edit?usp=sharing) |
 | Host-associated | [Host-associated template terms](https://noaa-omics-templates.readthedocs.io/en/latest/host-edna-template.html)  | [NOAA_MIMARKS.survey.host-associated.6.0](https://docs.google.com/spreadsheets/d/1JtWgX_t5PbG0CpEJWHu906yH8Udek3l4I-KOM80MR6M/edit?usp=sharing) |  |
 | sediment | [Sediment template terms]()  | [NOAA_MIMARKS.survey.sediment.6.0](https://docs.google.com/spreadsheets/d/1yF0M58huJKozVp7WObjWOQCH01rjf9Z-g9ykwyLkeSg/edit?usp=sharing) |  |
 |  |  |  |  |
