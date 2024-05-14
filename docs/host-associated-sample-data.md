@@ -1,4 +1,4 @@
-# water_sample_data Sheet  
+# host-associated_sample_data Sheet  
 
 Contextual data about the samples collected, such as when it was collected, where it was collected from, what kind of sample it is, and what were the properties of the host and host environment from which the sample was taken. Each row is a distinct sample. Most of this information is recorded during sample collection. Many terms have controlled vocabulary, such as organism, env_broad_scale, waterBody. This file contains information that is submitted to NCBI when generating a BioSample. Other important fields for metadata processing include amplicon_sequenced, which helps to link together different types of metdata. This sheet contains terms from the MIMARKS survey host-associated 6.0 package. For other types of samples (eg, sediment), use the appropriate template file.  
 
