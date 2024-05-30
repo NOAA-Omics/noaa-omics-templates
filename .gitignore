@@ -1,0 +1,8 @@
+#Ignore .env files
+.env
+
+#Ignore token files
+token.json
+
+#Ignore Anaconda environment.yml config file
+environment.yml
