@@ -1,5 +1,6 @@
 import os
 import gspread
+import gspread_formatting as gf
 from gspread.utils import rowcol_to_a1
 import pandas as pd
 from google.oauth2.service_account import Credentials
@@ -65,58 +66,45 @@ def get_aoml_darwincore_terms(study_template_dict_sheet_id):
     
     return aoml_darwincore_terms
 
+def column_letter(col_idx):
+    """Convert a column index into a column letter (1-indexed)."""
+    string = ""
+    while col_idx > 0:
+        col_idx, remainder = divmod(col_idx - 1, 26) #26 for alphabet length
+        string = chr(65 + remainder) + string #65 is ASCII For A
+    return string
+
 def edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id):
     new_sheet = client.open_by_key(new_template_id)
     sediment_sample_data = new_sheet.worksheet('sediment_sample_data')
-    
-    # Get current terms from row 9
+
     existing_terms = sediment_sample_data.row_values(9)
-    num_columns = sediment_sample_data.col_count
+    core_terms = existing_terms[:-2]
+    dm_mb = existing_terms[-2:]
 
-    # Locate the position of the 'date_modified' and 'modified_by' columns to know where to insert new terms
-    try:
-        date_modified_index = existing_terms.index('date_modified') + 1
-        modified_by_index = existing_terms.index('modified_by') + 1
-    except ValueError:
-        # If not found, assume they should be at the very end
-        date_modified_index = num_columns + 1
-        modified_by_index = num_columns + 2
-
-    # Remove these special columns
-    indices_to_remove = sorted([date_modified_index, modified_by_index], reverse=True)
-    for index in indices_to_remove:
-        sediment_sample_data.delete_columns(index)
-
-    # Refresh existing terms and their counts after deletion
-    existing_terms = sediment_sample_data.row_values(9)
-    num_columns = len(existing_terms)
-
-    # Define valid terms (MIMARKS + AOML/DWC)
     valid_terms = {term.replace('*', '').strip() for term in mimarks_terms_with_comments.keys()}
     valid_terms.update(get_aoml_darwincore_terms(study_template_dict_sheet_id))
+    terms_to_delete = [term for term in core_terms if term not in valid_terms]
+    terms_to_add = [term for term, comment in mimarks_terms_with_comments.items() if term.replace('*', '').strip() not in core_terms]
 
-    # Remove outdated terms
-    columns_to_delete = [i for i, term in enumerate(existing_terms, start=1) if term not in valid_terms]
-    for col_index in reversed(columns_to_delete):
+    for term in reversed(terms_to_delete):
+        col_index = core_terms.index(term) + 1
         sediment_sample_data.delete_columns(col_index)
+        core_terms.remove(term)
 
-    # Refresh terms and column count after deletions
-    existing_terms = sediment_sample_data.row_values(9)
-    insert_index = len(existing_terms) + 1
+    updated_terms = core_terms + terms_to_add + dm_mb
+    print("Total terms after update (including dm and mb):", len(updated_terms))
 
-    # Insert new terms at the correct position (before the previous 'date_modified')
-    for term, comment in mimarks_terms_with_comments.items():
-        cleaned_term = term.replace('*', '').strip()
-        if cleaned_term not in existing_terms:
-            values = [[cleaned_term]]
-            sediment_sample_data.insert_cols(values, insert_index)
-            insert_index += 1  # Update insert_index to keep appending next new columns correctly
+    end_col_letter = column_letter(len(updated_terms))
+    range_to_update = f'A9:{end_col_letter}9'
+    print("Range to update:", range_to_update)
 
-    # Re-add 'date_modified' and 'modified_by' at the correct positions
-    sediment_sample_data.insert_cols([['date_modified']], insert_index)
-    sediment_sample_data.insert_cols([['modified_by']], insert_index + 1)
+    sediment_sample_data.update(range_name=range_to_update, values=[updated_terms])
 
-
+    for i, term in enumerate(updated_terms, start=1):
+        if '*' in term:
+            cell = gspread.utils.rowcol_to_a1(9, i)
+            gf.format_cell(sediment_sample_data, cell, gf.cellFormat(backgroundColor=gf.Color(0.0, 1.0, 0.0)))
 
 
 def pause_for_user(message):
