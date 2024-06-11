@@ -1,6 +1,7 @@
 import os
 import gspread
 import gspread_formatting as gf
+from gspread_formatting import *
 from gspread.utils import rowcol_to_a1
 import pandas as pd
 from google.oauth2.service_account import Credentials
@@ -101,10 +102,52 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
 
     sediment_sample_data.update(range_name=range_to_update, values=[updated_terms])
 
+    requests = []
+    format_requests = []  # This will store formatting requests
     for i, term in enumerate(updated_terms, start=1):
-        if '*' in term:
-            cell = gspread.utils.rowcol_to_a1(9, i)
-            gf.format_cell(sediment_sample_data, cell, gf.cellFormat(backgroundColor=gf.Color(0.0, 1.0, 0.0)))
+        cell = rowcol_to_a1(9, i)
+        if term in terms_to_add:
+            # Add comment to the cell
+            comment = mimarks_terms_with_comments.get(term, '')
+            if comment:
+                requests.append({
+                    "updateCells": {
+                        "range": {
+                            "sheetId": sediment_sample_data.id,
+                            "startRowIndex": 8,
+                            "endRowIndex": 9,
+                            "startColumnIndex": i-1,
+                            "endColumnIndex": i
+                        },
+                        "rows": [{
+                            "values": [{
+                                "note": comment
+                            }]
+                        }],
+                        "fields": "note"
+                    }
+                })
+
+            # Prepare to change the background color of the cell to green
+            format_requests.append((cell, CellFormat(backgroundColor=Color(0.5725490196078431, 0.8156862745098039, 0.3137254901960784)))) 
+            # custom RGB format for Google Sheets. its a percentage of RGB value out of 255. So, for custom color #92d050, the green in the google sheets,
+            # you need to get the RGB values and divide each by 255
+
+    # Execute all requests in one batch update to avoid multiple API calls
+    if requests:
+        new_sheet.batch_update({'requests': requests})
+
+    # Apply all formatting requests
+    if format_requests:
+        format_cell_ranges(sediment_sample_data, format_requests)
+
+    print("Template editing complete.")
+
+
+
+
+
+
 
 
 def pause_for_user(message):
