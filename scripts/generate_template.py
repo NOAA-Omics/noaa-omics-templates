@@ -93,7 +93,7 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
         sediment_sample_data.delete_columns(col_index)
         core_terms.remove(term)
 
-    updated_terms = core_terms + terms_to_add + dm_mb
+    updated_terms = core_terms + [term.replace('*', '').strip() for term in terms_to_add] + dm_mb
     print("Total terms after update (including dm and mb):", len(updated_terms))
 
     end_col_letter = column_letter(len(updated_terms))
@@ -105,10 +105,12 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
     requests = []
     format_requests = []  # This will store formatting requests
     for i, term in enumerate(updated_terms, start=1):
+        original_term = core_terms + terms_to_add + dm_mb
         cell = rowcol_to_a1(9, i)
-        if term in terms_to_add:
+        actual_term = original_term[i-1]
+        if actual_term in terms_to_add:
             # Add comment to the cell
-            comment = mimarks_terms_with_comments.get(term, '')
+            comment = mimarks_terms_with_comments.get(actual_term, '')
             if comment:
                 requests.append({
                     "updateCells": {
@@ -129,10 +131,10 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
                 })
 
             # Determine the background color based on the presence of '*'
-            if term.startswith('*'):
+            if actual_term.startswith('*'):
                 bgcolor = Color(0.5725490196078431, 0.8156862745098039, 0.3137254901960784)  # Green
             else:
-                bgcolor = Color(1.0, 0.9215686274509804 , 0.6117647058823529)  # yellow
+                bgcolor = Color(0.5, 0.5, 0.5)  # Grey
 
             format_requests.append((cell, CellFormat(backgroundColor=bgcolor)))
 
@@ -145,6 +147,7 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
         format_cell_ranges(sediment_sample_data, format_requests)
 
     print("Template editing complete with correct color coding.")
+
 
 
 
