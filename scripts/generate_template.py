@@ -128,10 +128,13 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
                     }
                 })
 
-            # Prepare to change the background color of the cell to green
-            format_requests.append((cell, CellFormat(backgroundColor=Color(0.5725490196078431, 0.8156862745098039, 0.3137254901960784)))) 
-            # custom RGB format for Google Sheets. its a percentage of RGB value out of 255. So, for custom color #92d050, the green in the google sheets,
-            # you need to get the RGB values and divide each by 255
+            # Determine the background color based on the presence of '*'
+            if term.startswith('*'):
+                bgcolor = Color(0.5725490196078431, 0.8156862745098039, 0.3137254901960784)  # Green
+            else:
+                bgcolor = Color(1.0, 0.9215686274509804 , 0.6117647058823529)  # yellow
+
+            format_requests.append((cell, CellFormat(backgroundColor=bgcolor)))
 
     # Execute all requests in one batch update to avoid multiple API calls
     if requests:
@@ -141,7 +144,8 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
     if format_requests:
         format_cell_ranges(sediment_sample_data, format_requests)
 
-    print("Template editing complete.")
+    print("Template editing complete with correct color coding.")
+
 
 
 
