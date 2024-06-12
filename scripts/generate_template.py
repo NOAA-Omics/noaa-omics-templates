@@ -132,9 +132,9 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
 
             # Determine the background color based on the presence of '*'
             if actual_term.startswith('*'):
-                bgcolor = Color(0.5725490196078431, 0.8156862745098039, 0.3137254901960784)  # Green
+                bgcolor = Color(0.0, 1.0, 0.0)  # Google sheets Green
             else:
-                bgcolor = Color(0.5, 0.5, 0.5)  # Grey
+                bgcolor = Color(1.0, 1.0, 0.0)  # Google Sheets yellow
 
             format_requests.append((cell, CellFormat(backgroundColor=bgcolor)))
 
