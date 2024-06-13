@@ -7,8 +7,8 @@ def read_excel_file(file_path):
     ws = wb.active
 
     data = {}
-    #skips the 1st 2 rows
-    r= 3
+    # skips the 1st 2 rows
+    r = 3
 
     for row in ws.iter_rows(min_row=3, values_only=True):
         if row[0] is not None:
@@ -16,10 +16,11 @@ def read_excel_file(file_path):
             hyperlink_text = row[4]
             hyperlink_target = None
             try:
-            # Check if the cell contains a hyperlink
+                # Check if the cell contains a hyperlink
                 if ws.cell(row=r, column=5).hyperlink:
                     hyperlink_target = ws.cell(row=r, column=5).hyperlink.target
-                else: hyperlink_target = None
+                else:
+                    hyperlink_target = None
             except AttributeError:
                 hyperlink_target = None
 
@@ -45,7 +46,7 @@ def write_mds(data, folder_name):
         if '|' in value['sheet']:
             sheets = value['sheet'].split(" | ")
             for s in sheets:
-                sheets_dict[s] = os.path.join(folder_name,s)
+                sheets_dict[s] = os.path.join(folder_name, s)
         else:
             sheets_dict[value['sheet']] = os.path.join(folder_name, f"{value['sheet']}")
         for s in sheets_dict.keys():
@@ -55,7 +56,7 @@ def write_mds(data, folder_name):
             with open(file_name, 'w') as file:
                 file.write(f"# Term: {key}\n\n")
                 file.write(f"*{value['definition']}*\n\n")
-                if value['origin_link'] == None:
+                if value['origin_link'] is None:
                     file.write(f"Origin: {value['origin_text']}\n\n")
                 else:
                     file.write(f"Origin: [{value['origin_text']}]({value['origin_link']})\n\n")
@@ -72,14 +73,12 @@ def write_mds(data, folder_name):
                 elif value['required_by'] == 'OBIS':
                     file.write("**Required by OBIS**")
 
-
-
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python generate_term_docs.py <file_path> <output_folder>")
+    if len(sys.argv) != 2:
+        print("Usage: python generate_term_docs.py <output_folder>")
     else:
-        file_path = sys.argv[1]
-        folder_name = sys.argv[2]
+        folder_name = sys.argv[1]
+        # Construct the path to the study-data-template-dict.xlsx file
+        file_path = os.path.join(os.path.dirname(__file__), '..', 'script-dependencies', 'study-data-template-dict.xlsx')
         data_dict = read_excel_file(file_path)
         write_mds(data_dict, folder_name)
-        
