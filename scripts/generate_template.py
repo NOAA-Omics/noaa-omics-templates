@@ -9,11 +9,18 @@ from dotenv import load_dotenv
 from openpyxl import load_workbook
 
 # Load environment variables
-load_dotenv()
+env_path = os.path.join(os.path.dirname(__file__), '..', 'script-dependencies', '.env')
+load_dotenv(dotenv_path=env_path)
 
-# Set up paths and credentials for Google API
-credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS").replace('\\', '/')
-mimarks_file_path = os.getenv("MIMARKS_FILE_PATH")
+# Copy and paste the name of your Google Sheets API credentials file
+credentials_filename = 'data-templates-c7159dc891a7.json'
+credentials_path = os.path.join(os.path.dirname(os.path.realpath(env_path)), credentials_filename)
+
+# Copy and paste MIMARKS package Excel filename
+mimarks_filename = 'MIMARKS.survey.sediment.6.0.xlsx'
+mimarks_file_path = os.path.join(os.path.dirname(os.path.realpath(env_path)), mimarks_filename)
+
+# Grab Google Sheet IDs from .env file
 study_template_dict_sheet_id = os.getenv("STUDY_TEMPLATE_DICT_SHEET_ID")
 new_template_id = os.getenv("NEW_TEMPLATE_ID")
 
@@ -147,14 +154,6 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
         format_cell_ranges(sediment_sample_data, format_requests)
 
     print("Template editing complete with correct color coding.")
-
-
-
-
-
-
-
-
 
 
 def pause_for_user(message):
