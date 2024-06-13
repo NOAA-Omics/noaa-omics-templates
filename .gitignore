@@ -1,0 +1,13 @@
+#Ignore .env files
+.env
+
+#Ignore token files
+token.json
+
+#Ignore Anaconda environment.yml config file
+environment.yml
+
+#Ignore input files (excel tables, credentials)
+script-dependencies/*
+!script-dependencies/.gitkeep
+#Line above enables an empty folder, script-dependencies, to be included on GitHub repo
