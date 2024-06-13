@@ -84,9 +84,13 @@ def column_letter(col_idx):
 
 def edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id):
     new_sheet = client.open_by_key(new_template_id)
-    sediment_sample_data = new_sheet.worksheet('sediment_sample_data')
+    data_template_type = input("Enter name of new data template type, i.e.: sediment, water, soil: ")
+    sample_data = data_template_type + '_sample_data'
+    sample_data = new_sheet.worksheet(sample_data)
 
-    existing_terms = sediment_sample_data.row_values(9)
+# Extra work done to move date_modified and modified_by columns to the end, after adding new terms
+# date_modified = dm, and modified_by = mb, in terms of the code
+    existing_terms = sample_data.row_values(9)
     core_terms = existing_terms[:-2]
     dm_mb = existing_terms[-2:]
 
@@ -97,17 +101,17 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
 
     for term in reversed(terms_to_delete):
         col_index = core_terms.index(term) + 1
-        sediment_sample_data.delete_columns(col_index)
+        sample_data.delete_columns(col_index)
         core_terms.remove(term)
 
     updated_terms = core_terms + [term.replace('*', '').strip() for term in terms_to_add] + dm_mb
-    print("Total terms after update (including dm and mb):", len(updated_terms))
+    print("Total terms after update (including date_modified and modified_by):", len(updated_terms))
 
     end_col_letter = column_letter(len(updated_terms))
     range_to_update = f'A9:{end_col_letter}9'
     print("Range to update:", range_to_update)
 
-    sediment_sample_data.update(range_name=range_to_update, values=[updated_terms])
+    sample_data.update(range_name=range_to_update, values=[updated_terms])
 
     requests = []
     format_requests = []  # This will store formatting requests
@@ -122,7 +126,7 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
                 requests.append({
                     "updateCells": {
                         "range": {
-                            "sheetId": sediment_sample_data.id,
+                            "sheetId": sample_data.id,
                             "startRowIndex": 8,
                             "endRowIndex": 9,
                             "startColumnIndex": i-1,
@@ -151,7 +155,7 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
 
     # Apply all formatting requests
     if format_requests:
-        format_cell_ranges(sediment_sample_data, format_requests)
+        format_cell_ranges(sample_data, format_requests)
 
     print("Template editing complete with correct color coding.")
 
