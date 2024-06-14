@@ -32,7 +32,8 @@ creds = Credentials.from_service_account_file(credentials_path, scopes=SCOPES)
 client = gspread.authorize(creds)
 
 def get_mimarks_terms(mimarks_file_path):
-    print('Getting MIMARKS terms from downloaded package...')
+    print('----------------------------------------------')
+    print('\nGetting MIMARKS terms from downloaded package...')
     # Load the MIMARKS Excel file using openpyxl to get comments
     wb = load_workbook(mimarks_file_path, data_only=True)
     ws = wb.active
@@ -48,6 +49,8 @@ def get_mimarks_terms(mimarks_file_path):
         mimarks_terms_with_comments[term] = comment
 
     # Print the dictionary to verify
+    print('Printing MIMARKs Term : Comment')
+    print('\n')
     for term, comment in mimarks_terms_with_comments.items():
         print(f"Term: {term}, Comment: {comment}")
 
@@ -68,9 +71,12 @@ def get_aoml_darwincore_terms(study_template_dict_sheet_id):
 
     # Grab all row 'name's (1st column) that were found above ^
     aoml_darwincore_terms = filtered_data.iloc[:, 0].tolist() 
+    
 
-    print("printing aoml and darwincore terms from study-data-template-dict google sheet:")
+    print('----------------------------------------------')
+    print("Printing AOML and Darwin Core terms from study-data-template-dict Google Sheet:")
     print(aoml_darwincore_terms)
+    print('----------------------------------------------')
     
     return aoml_darwincore_terms
 
@@ -84,9 +90,10 @@ def column_letter(col_idx):
 
 def edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id):
     new_sheet = client.open_by_key(new_template_id)
-    data_template_type = input("Enter name of new data template type, i.e.: sediment, water, soil: ")
-    sample_data = data_template_type + '_sample_data'
-    sample_data = new_sheet.worksheet(sample_data)
+    print('----------------------------------------------')
+    data_template_type = input("\nEnter name of new data template type, i.e.: sediment, water, soil: ")
+    sample_data_sheetname = data_template_type + '_sample_data'
+    sample_data = new_sheet.worksheet(sample_data_sheetname)
 
 # Extra work done to move date_modified and modified_by columns to the end, after adding new terms
 # date_modified = dm, and modified_by = mb, in terms of the code
@@ -98,18 +105,28 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
     valid_terms.update(get_aoml_darwincore_terms(study_template_dict_sheet_id))
     terms_to_delete = [term for term in core_terms if term not in valid_terms]
     terms_to_add = [term for term, comment in mimarks_terms_with_comments.items() if term.replace('*', '').strip() not in core_terms]
-
+    
+    print('\nTerms to add to data template: ')
+    print(terms_to_add)
+    print('\nTerms to be deleted from data template: ')
+    print(terms_to_delete)
+    
+    new_MIMARKS_terms_with_comments = {term.replace('*', '').strip(): comment for term, comment in mimarks_terms_with_comments.items() if term.replace('*', '').strip() not in core_terms}
+    print("\nNew terms to be added with comments:")
+    for term in new_MIMARKS_terms_with_comments.items():
+        print(f"{term}")
+    
     for term in reversed(terms_to_delete):
         col_index = core_terms.index(term) + 1
         sample_data.delete_columns(col_index)
         core_terms.remove(term)
 
     updated_terms = core_terms + [term.replace('*', '').strip() for term in terms_to_add] + dm_mb
-    print("Total terms after update (including date_modified and modified_by):", len(updated_terms))
+    print("\nTotal terms after update (including date_modified and modified_by):", len(updated_terms))
 
     end_col_letter = column_letter(len(updated_terms))
     range_to_update = f'A9:{end_col_letter}9'
-    print("Range to update:", range_to_update)
+    print("\nRange to update:", range_to_update)
 
     sample_data.update(range_name=range_to_update, values=[updated_terms])
 
@@ -157,7 +174,34 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
     if format_requests:
         format_cell_ranges(sample_data, format_requests)
 
-    print("Template editing complete with correct color coding.")
+    print("\nGoogle Sheet data template editing complete.")
+    print('----------------------------------------------')
+    
+    return(sample_data_sheetname, new_MIMARKS_terms_with_comments)
+
+def update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id):
+    # Establish connection to the Google Sheets document
+    study_sheet = client.open_by_key(study_template_dict_sheet_id)
+    study_template_dict = study_sheet.worksheet('study-data-templates')
+
+    # Get the last row number to start appending new rows
+    last_row = len(study_template_dict.get_all_values()) + 1
+
+    print('----------------------------------------------')
+    print(f"Starting to update the 'study-data-templates' sheet with new terms.")
+
+    # Iterate over the new terms and their comments
+    for term, comment in new_MIMARKS_terms_with_comments.items():
+        # Prepare the row content based on the column structure
+        row_content = [term, '', '', comment, '', sample_data_sheetname]
+        # Append the row to the sheet
+        study_template_dict.append_row(row_content, table_range=f"A{last_row}")
+
+        print(f"Added term '{term}' with comment '{comment}' to the sheet in row {last_row}.")
+        last_row += 1  # Increment to the next row for the next term
+
+    print('Update complete. All new terms have been added to the dictionary.')
+    print('----------------------------------------------')    
 
 
 def pause_for_user(message):
@@ -166,4 +210,11 @@ def pause_for_user(message):
 
 if __name__ == "__main__":
     mimarks_terms_with_comments = get_mimarks_terms(mimarks_file_path)
-    edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id)
+    sample_data_sheetname, new_MIMARKS_terms_with_comments = edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id)
+    print('Please check your new data template for accuracy before continuing!')
+    print('If your data template is correct, update study-data-template-dict to include the new terms')
+    choice = input('Would you like to continue? (Y / N): ')
+    if choice == 'Y':
+        update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id)
+    if choice != 'Y':
+        print('Exiting program. Restore your data template to previous version in Google Sheets if you discovered errors.')
