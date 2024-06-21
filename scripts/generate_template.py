@@ -1,4 +1,5 @@
 import os
+import re
 import gspread
 import gspread_formatting as gf
 from gspread_formatting import *
@@ -66,8 +67,13 @@ def get_aoml_darwincore_terms(study_template_dict_sheet_id):
     headers = data[1]  # 2nd row as headers
     study_template_dict_df = pd.DataFrame(data[2:], columns=headers)  # Data starts from row 3
 
+	# use regex to match all 'sheet' column values that CONTAIN sample_data
+    # could be sample_data AND another sheet
+    # will not include things like 'water_sample_data'
+    pattern = r'\b(sample_data)\b'
+
     # Rows where'sheet' column conntains 'sample_data'
-    filtered_data = study_template_dict_df[study_template_dict_df['sheet'] == 'sample_data']
+    filtered_data = study_template_dict_df[study_template_dict_df['sheet'].str.contains(pattern, na=False, regex=True)]
 
     # Grab all row 'name's (1st column) that were found above ^
     aoml_darwincore_terms = filtered_data.iloc[:, 0].tolist() 
@@ -120,6 +126,11 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
         col_index = core_terms.index(term) + 1
         sample_data.delete_columns(col_index)
         core_terms.remove(term)
+
+	#latest update
+    list_of_terms = core_terms + [term.replace('*', '').strip() for term in terms_to_add]
+    #this list, list_of_terms, SHOULD be all the terms in our new data template... right?
+    
 
     updated_terms = core_terms + [term.replace('*', '').strip() for term in terms_to_add] + dm_mb
     print("\nTotal terms after update (including date_modified and modified_by):", len(updated_terms))
@@ -177,31 +188,58 @@ def edit_template(mimarks_terms_with_comments, new_template_id, study_template_d
     print("\nGoogle Sheet data template editing complete.")
     print('----------------------------------------------')
     
-    return(sample_data_sheetname, new_MIMARKS_terms_with_comments)
+    return(sample_data_sheetname, new_MIMARKS_terms_with_comments, list_of_terms)
 
-def update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id):
+def update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id, list_of_terms):
     # Establish connection to the Google Sheets document
     study_sheet = client.open_by_key(study_template_dict_sheet_id)
     study_template_dict = study_sheet.worksheet('study-data-templates')
 
-    # Get the last row number to start appending new rows
-    last_row = len(study_template_dict.get_all_values()) + 1
+    # Fetch AOML and DarwinCore terms to exclude
+    aoml_darwincore_terms = get_aoml_darwincore_terms(study_template_dict_sheet_id)
 
-    print('----------------------------------------------')
-    print(f"Starting to update the 'study-data-templates' sheet with new terms.")
+    # Remove AOML/DarwinCore terms and new MIMARKS terms from the list_of_terms
+    filtered_terms = [term for term in list_of_terms if term not in aoml_darwincore_terms and term not in new_MIMARKS_terms_with_comments.keys()]
 
-    # Iterate over the new terms and their comments
-    for term, comment in new_MIMARKS_terms_with_comments.items():
-        # Prepare the row content based on the column structure
-        row_content = [term, '', '', comment, '', sample_data_sheetname]
-        # Append the row to the sheet
-        study_template_dict.append_row(row_content, table_range=f"A{last_row}")
+    # Fetch current data to DataFrame for easier manipulation
+    data = study_template_dict.get_all_values()
+    if data:  # Check if data is not empty
+        headers = data[1]  # Assuming the second row contains headers
+        df = pd.DataFrame(data[2:], columns=headers)  # Data starts from the third row
 
-        print(f"Added term '{term}' with comment '{comment}' to the sheet in row {last_row}.")
-        last_row += 1  # Increment to the next row for the next term
+        # Trim whitespace from column headers to avoid issues
+        df.columns = df.columns.str.strip()
 
-    print('Update complete. All new terms have been added to the dictionary.')
-    print('----------------------------------------------')    
+        # Update 'sheet' column for terms that need updating
+        updated = False
+        for index, row in df.iterrows():
+            if row['name'] in filtered_terms and sample_data_sheetname not in row['sheet'].split('|'):
+                updated_sheets = row['sheet'] + ' | ' + sample_data_sheetname
+                df.at[index, 'sheet'] = updated_sheets
+                updated = True
+
+        # Convert the DataFrame back to a list of lists to update the Google Sheet if updates were made
+        if updated:
+            updated_data = df.values.tolist()
+            study_template_dict.update('A3', updated_data, value_input_option='USER_ENTERED')
+
+        # Get the last row number to start appending new rows
+        last_row = len(df) + 3  # Adding 3 because data starts from row 3
+
+        # Add new MIMARKS terms
+        for term, comment in new_MIMARKS_terms_with_comments.items():
+            # Prepare the row content based on the column structure
+            row_content = [term, '', '', comment, '', sample_data_sheetname]
+            # Append the row to the sheet
+            study_template_dict.append_row(row_content, table_range=f"A{last_row}")
+
+            last_row += 1  # Increment to the next row for the next term
+
+    else:
+        print("No data found in sheet.")
+
+    print('Update complete. Specified terms have been updated and new terms added to the dictionary.')
+
 
 
 def pause_for_user(message):
@@ -210,11 +248,11 @@ def pause_for_user(message):
 
 if __name__ == "__main__":
     mimarks_terms_with_comments = get_mimarks_terms(mimarks_file_path)
-    sample_data_sheetname, new_MIMARKS_terms_with_comments = edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id)
+    sample_data_sheetname, new_MIMARKS_terms_with_comments, list_of_terms = edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id)
     print('Please check your new data template for accuracy before continuing!')
     print('If your data template is correct, update study-data-template-dict to include the new terms')
     choice = input('Would you like to continue? (Y / N): ')
     if choice == 'Y':
-        update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id)
+        update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id, list_of_terms)
     if choice != 'Y':
         print('Exiting program. Restore your data template to previous version in Google Sheets if you discovered errors.')
