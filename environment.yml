@@ -1,0 +1,16 @@
+name: data-templates-env
+channels:
+  - conda-forge  # Add conda-forge channel
+  - defaults
+dependencies:
+  - python=3.11
+  - pandas
+  - openpyxl
+  - google-auth
+  - python-dotenv
+  - pip:
+    - mkdocs
+    - mkdocs-material
+    - mkdocstrings
+    - gspread
+    - gspread_formatting
