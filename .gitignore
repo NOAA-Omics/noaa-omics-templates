@@ -5,7 +5,7 @@
 token.json
 
 #Ignore Anaconda environment.yml config file
-environment.yml
+#environment.yml
 
 #Ignore input files (excel tables, credentials)
 script-dependencies/*
