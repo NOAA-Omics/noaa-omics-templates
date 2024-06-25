@@ -2,7 +2,7 @@
 
 *Gender of physical sex of the host*
 
-Origin: [MIXS:0000811](https://w3id.org/mixs/0000811)
+Origin: MIXS:0000811
 
 Example: None
 

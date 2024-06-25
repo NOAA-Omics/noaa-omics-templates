@@ -2,7 +2,7 @@
 
 *literature reference giving growth conditions of the host*
 
-Origin: [MIXS:0000871](https://w3id.org/mixs/0000871)
+Origin: MIXS:0000871
 
 Example: None
 

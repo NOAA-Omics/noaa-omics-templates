@@ -2,7 +2,7 @@
 
 *the color of host*
 
-Origin: [MIXS:0000260](https://w3id.org/mixs/0000260)
+Origin: MIXS:0000260
 
 Example: None
 

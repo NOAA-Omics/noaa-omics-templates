@@ -2,7 +2,7 @@
 
 *measurement of dry mass*
 
-Origin: [MIXS:0000257](https://w3id.org/mixs/0000257)
+Origin: MIXS:0000257
 
 Example: None
 

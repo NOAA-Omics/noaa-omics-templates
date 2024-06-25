@@ -2,7 +2,7 @@
 
 *Relationships to other hosts in the same study; can include multiple relationships*
 
-Origin: [MIXS:0000872](https://w3id.org/mixs/0000872)
+Origin: MIXS:0000872
 
 Example: None
 

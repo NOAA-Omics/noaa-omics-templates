@@ -2,7 +2,7 @@
 
 *Method used for alkalinity measurement*
 
-Origin: [MIXS:0000298](https://w3id.org/mixs/0000298)
+Origin: MIXS:0000298
 
 Example: None
 

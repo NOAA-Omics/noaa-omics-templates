@@ -2,7 +2,7 @@
 
 *morphological shape of host*
 
-Origin: [MIXS:0000261](https://w3id.org/mixs/0000261)
+Origin: MIXS:0000261
 
 Example: None
 

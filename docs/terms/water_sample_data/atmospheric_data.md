@@ -2,7 +2,7 @@
 
 *measurement of atmospheric data; can include multiple data*
 
-Origin: [MIXS:0001097](https://w3id.org/mixs/0001097)
+Origin: MIXS:0001097
 
 Example: None
 

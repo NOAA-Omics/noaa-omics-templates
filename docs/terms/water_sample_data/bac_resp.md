@@ -2,7 +2,7 @@
 
 *measurement of bacterial respiration in the water column*
 
-Origin: [MIXS:0000684](https://w3id.org/mixs/0000684)
+Origin: MIXS:0000684
 
 Example: None
 

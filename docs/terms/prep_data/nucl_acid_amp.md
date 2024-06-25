@@ -2,7 +2,7 @@
 
 *A link to a literature reference, electronic resource or a standard operating procedure (SOP), that describes the enzymatic amplification (PCR, TMA, NASBA) of specific nucleic acids*
 
-Origin: [MIXS:0000038](https://w3id.org/mixs/0000038)
+Origin: MIXS:0000038
 
 Example: None
 

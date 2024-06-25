@@ -2,7 +2,7 @@
 
 *Observed genotype*
 
-Origin: [MIXS:0000365](https://w3id.org/mixs/0000365)
+Origin: MIXS:0000365
 
 Example: None
 

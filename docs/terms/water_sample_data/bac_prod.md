@@ -2,7 +2,7 @@
 
 *bacterial production in the water column measured by isotope uptake*
 
-Origin: [MIXS:0000683](https://w3id.org/mixs/0000683)
+Origin: MIXS:0000683
 
 Example: None
 

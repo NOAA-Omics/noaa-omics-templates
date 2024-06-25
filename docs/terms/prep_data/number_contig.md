@@ -2,7 +2,7 @@
 
 *Total number of contigs in the cleaned/submitted assembly that makes up a given genome, SAG, MAG, or UViG*
 
-Origin: [MIXS:0000060](https://w3id.org/mixs/0000060)
+Origin: MIXS:0000060
 
 Example: 40.0
 

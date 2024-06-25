@@ -2,7 +2,7 @@
 
 *total particulate carbon content*
 
-Origin: [MIXS:0000747](https://w3id.org/mixs/0000747)
+Origin: MIXS:0000747
 
 Example: None
 

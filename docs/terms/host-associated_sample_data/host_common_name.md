@@ -2,7 +2,7 @@
 
 *The natural language (non-taxonomic) name of the host organism, e.g., mouse*
 
-Origin: [MIXS:0000248](https://w3id.org/mixs/0000248)
+Origin: MIXS:0000248
 
 Example: None
 

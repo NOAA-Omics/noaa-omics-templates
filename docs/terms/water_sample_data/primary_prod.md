@@ -2,7 +2,7 @@
 
 *measurement of primary production*
 
-Origin: [MIXS:0000728](https://w3id.org/mixs/0000728)
+Origin: MIXS:0000728
 
 Example: None
 

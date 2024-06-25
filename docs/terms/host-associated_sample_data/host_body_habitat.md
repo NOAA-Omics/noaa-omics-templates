@@ -2,7 +2,7 @@
 
 *original body habitat where the sample was obtained from*
 
-Origin: [MIXS:0000866](https://w3id.org/mixs/0000866)
+Origin: MIXS:0000866
 
 Example: None
 

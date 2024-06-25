@@ -2,7 +2,7 @@
 
 *the growth substrate of the host*
 
-Origin: [MIXS:0000252](https://w3id.org/mixs/0000252)
+Origin: MIXS:0000252
 
 Example: None
 

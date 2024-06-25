@@ -22,12 +22,12 @@ mimarks_filename = 'MIMARKS.survey.sediment.6.0.xlsx' # EDIT ME
 mimarks_file_path = os.path.join(os.path.dirname(os.path.realpath(env_path)), mimarks_filename)
 
 # Get Google Sheet IDs from .env file
-study_template_dict_sheet_id = os.getenv("STUDY_TEMPLATE_DICT_SHEET_ID")
-new_template_id = os.getenv("NEW_TEMPLATE_ID")
+#study_template_dict_sheet_id = os.getenv("STUDY_TEMPLATE_DICT_SHEET_ID")
+#new_template_id = os.getenv("NEW_TEMPLATE_ID")
 
 #Alternatively, you can directly insert the Google Sheet IDs here instead:
-#study_template_dict_sheet_id = "" #EDIT ME
-#new_template_id = "" #EDIT ME
+study_template_dict_sheet_id = "1YdATQ7xmoaA3L7880bLd1H9rLT95JhDL2EtFYH1viH8" #EDIT ME
+new_template_id = "1auJth8xuGYVLAGik5QVEGSnSpGIYlIkdZLp_Bd20D64" #EDIT ME
 
 # Define scopes for Google API
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]

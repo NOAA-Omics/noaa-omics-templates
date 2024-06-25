@@ -2,7 +2,7 @@
 
 *measurement of light intensity*
 
-Origin: [MIXS:0000706](https://w3id.org/mixs/0000706)
+Origin: MIXS:0000706
 
 Example: None
 

@@ -2,7 +2,7 @@
 
 *measurement of photon flux*
 
-Origin: [MIXS:0000725](https://w3id.org/mixs/0000725)
+Origin: MIXS:0000725
 
 Example: None
 

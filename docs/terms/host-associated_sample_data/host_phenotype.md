@@ -2,7 +2,7 @@
 
 *Phenotype of human or other host. Use terms from the phenotypic quality ontology (pato) or the Human Phenotype Ontology (HP)*
 
-Origin: [MIXS:0000874](https://w3id.org/mixs/0000874)
+Origin: MIXS:0000874
 
 Example: None
 

@@ -2,7 +2,7 @@
 
 *Reason for the sample, e.g., active surveillance in response to an outbreak, active surveillance not initiated by an outbreak, farm sample, market sample*
 
-Origin: [MIXS:0000860](https://w3id.org/mixs/0000860)
+Origin: MIXS:0000860
 
 Example: None
 

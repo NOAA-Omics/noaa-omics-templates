@@ -6,6 +6,6 @@ Origin: NCBI
 
 Example: None
 
-Sheet(s) containing term: sample_data | host-associated_sample_data
+Sheet(s) containing term: sample_data
 
 **Optional or context dependent**

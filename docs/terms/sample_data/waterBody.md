@@ -2,7 +2,7 @@
 
 *The name of the water body in which the dcterms:Location occurs.   Recommended best practice is to use a controlled vocabulary such as the Getty Thesaurus of Geographic Names.*
 
-Origin: [DwC](https://dwc.tdwg.org/terms/)
+Origin: DwC
 
 Example: Mexico, Gulf of
 

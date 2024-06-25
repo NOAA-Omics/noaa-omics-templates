@@ -2,7 +2,7 @@
 
 *the length of subject*
 
-Origin: [MIXS:0000256](https://w3id.org/mixs/0000256)
+Origin: MIXS:0000256
 
 Example: None
 

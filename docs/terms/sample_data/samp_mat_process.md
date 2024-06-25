@@ -2,7 +2,7 @@
 
 *Any processing applied to the sample during or after retrieving the sample from environment.*
 
-Origin: [MIXS:0000016](https://w3id.org/mixs/0000016)
+Origin: MIXS:0000016
 
 Example: Pumped through Sterivex filter (0.22um) using peristaltic pump
 

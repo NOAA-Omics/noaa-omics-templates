@@ -2,7 +2,7 @@
 
 *concentration of dissolved inorganic phosphorus*
 
-Origin: [MIXS:0000106](https://w3id.org/mixs/0000106)
+Origin: MIXS:0000106
 
 Example: None
 

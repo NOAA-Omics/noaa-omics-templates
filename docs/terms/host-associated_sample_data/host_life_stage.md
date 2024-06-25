@@ -2,7 +2,7 @@
 
 *description of host life stage*
 
-Origin: [MIXS:0000251](https://w3id.org/mixs/0000251)
+Origin: MIXS:0000251
 
 Example: None
 

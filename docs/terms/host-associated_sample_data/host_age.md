@@ -2,7 +2,7 @@
 
 *Age of host at the time of sampling*
 
-Origin: [MIXS:0000255](https://w3id.org/mixs/0000255)
+Origin: MIXS:0000255
 
 Example: None
 

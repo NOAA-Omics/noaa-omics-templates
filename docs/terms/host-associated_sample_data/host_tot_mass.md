@@ -2,7 +2,7 @@
 
 *total mass of the host at collection, the unit depends on host*
 
-Origin: [MIXS:0000263](https://w3id.org/mixs/0000263)
+Origin: MIXS:0000263
 
 Example: None
 

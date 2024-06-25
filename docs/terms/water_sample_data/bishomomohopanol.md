@@ -2,7 +2,7 @@
 
 *concentration of bishomohopanol*
 
-Origin: [MIXS:0000175](https://w3id.org/mixs/0000175)
+Origin: MIXS:0000175
 
 Example: None
 

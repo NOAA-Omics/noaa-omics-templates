@@ -2,7 +2,7 @@
 
 *ratio of amount or concentrations of carbon to nitrogen*
 
-Origin: [MIXS:0000310](https://w3id.org/mixs/0000310)
+Origin: MIXS:0000310
 
 Example: None
 

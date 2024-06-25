@@ -2,7 +2,7 @@
 
 *concentration of particulate organic nitrogen*
 
-Origin: [MIXS:0000719](https://w3id.org/mixs/0000719)
+Origin: MIXS:0000719
 
 Example: None
 

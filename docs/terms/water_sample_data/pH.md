@@ -2,7 +2,7 @@
 
 *pH measurement*
 
-Origin: [MIXS:0001001](https://w3id.org/mixs/0001001)
+Origin: MIXS:0001001
 
 Example: None
 

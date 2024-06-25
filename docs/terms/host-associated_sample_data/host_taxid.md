@@ -2,7 +2,7 @@
 
 *NCBI taxonomy ID of the host, e.g. 9606*
 
-Origin: [MIXS:0000250](https://w3id.org/mixs/0000250)
+Origin: MIXS:0000250
 
 Example: None
 

@@ -2,7 +2,7 @@
 
 *electrical conductivity of water*
 
-Origin: [MIXS:0000692](https://w3id.org/mixs/0000692)
+Origin: MIXS:0000692
 
 Example: None
 

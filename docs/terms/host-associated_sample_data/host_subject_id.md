@@ -2,7 +2,7 @@
 
 *a unique identifier by which each subject can be referred to, de-identified, e.g. #131*
 
-Origin: [MIXS:0000861](https://w3id.org/mixs/0000861)
+Origin: MIXS:0000861
 
 Example: None
 

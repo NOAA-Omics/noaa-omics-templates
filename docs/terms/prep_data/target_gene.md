@@ -2,7 +2,7 @@
 
 *Targeted gene or marker name for marker-based studies*
 
-Origin: [MIXS:0000044](https://w3id.org/mixs/0000044)
+Origin: MIXS:0000044
 
 Example: 16S rRNA
 

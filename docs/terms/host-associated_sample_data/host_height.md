@@ -2,7 +2,7 @@
 
 *the height of subject*
 
-Origin: [MIXS:0000264](https://w3id.org/mixs/0000264)
+Origin: MIXS:0000264
 
 Example: None
 

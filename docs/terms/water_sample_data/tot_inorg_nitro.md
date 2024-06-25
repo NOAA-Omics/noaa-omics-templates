@@ -2,7 +2,7 @@
 
 *total inorganic nitrogen content*
 
-Origin: [MIXS:0000745](https://w3id.org/mixs/0000745)
+Origin: MIXS:0000745
 
 Example: None
 

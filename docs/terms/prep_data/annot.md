@@ -2,7 +2,7 @@
 
 *Tool used for annotation, or for cases where annotation was provided by a community jamboree or model organism database rather than by a specific submitter*
 
-Origin: [MIXS:0000059](https://w3id.org/mixs/0000059)
+Origin: MIXS:0000059
 
 Example: prokka
 

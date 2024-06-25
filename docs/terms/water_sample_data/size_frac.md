@@ -2,10 +2,10 @@
 
 *Filtering pore size used in sample preparation*
 
-Origin: [MIXS:0000017](https://w3id.org/mixs/0000017)
+Origin: MIXS:0000017
 
 Example: 0.22 micrometer
 
-Sheet(s) containing term: water_sample_data | host-associated_sample_data
+Sheet(s) containing term: water_sample_data | host-associated_sample_data | sediment_sample_data
 
 **Optional or context dependent**

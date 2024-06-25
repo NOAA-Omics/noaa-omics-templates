@@ -2,10 +2,10 @@
 
 *The altitude of the sample is the vertical distance between Earth's surface above Sea Level and the sampled position in the air.*
 
-Origin: [MIXS:0000094](https://w3id.org/mixs/0000094)
+Origin: MIXS:0000094
 
 Example: None
 
-Sheet(s) containing term: water_sample_data | host-associated_sample_data
+Sheet(s) containing term: water_sample_data | host-associated_sample_data | sediment_sample_data
 
 **Optional or context dependent**

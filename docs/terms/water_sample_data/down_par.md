@@ -2,7 +2,7 @@
 
 *visible waveband radiance and irradiance measurements in the water column*
 
-Origin: [MIXS:0000703](https://w3id.org/mixs/0000703)
+Origin: MIXS:0000703
 
 Example: None
 
