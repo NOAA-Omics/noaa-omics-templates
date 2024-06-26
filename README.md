@@ -56,7 +56,6 @@ cd noaa-omics-templates
 ```
 
 2. Configure Anaconda environment using provided `environment.yml` 
-- Open the `environment.yml` file and rename 'name: ' to whatever you want. ex: data-templates-env
 ```bash
 conda env create -f environment.yml 
 conda activate data-templates-env
