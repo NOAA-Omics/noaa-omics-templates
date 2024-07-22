@@ -1,5 +1,7 @@
 import os
 import re
+import time
+import sys
 import gspread
 import gspread_formatting as gf
 from gspread_formatting import *
@@ -22,12 +24,12 @@ mimarks_filename = 'MIMARKS.survey.sediment.6.0.xlsx' # EDIT ME
 mimarks_file_path = os.path.join(os.path.dirname(os.path.realpath(env_path)), mimarks_filename)
 
 # Get Google Sheet IDs from .env file
-study_template_dict_sheet_id = os.getenv("STUDY_TEMPLATE_DICT_SHEET_ID")
-new_template_id = os.getenv("NEW_TEMPLATE_ID")
+#study_template_dict_sheet_id = os.getenv("STUDY_TEMPLATE_DICT_SHEET_ID")
+#new_template_id = os.getenv("NEW_TEMPLATE_ID")
 
 #Alternatively, you can directly insert the Google Sheet IDs here instead:
-#study_template_dict_sheet_id = "" #EDIT ME
-#new_template_id = "" #EDIT ME
+study_template_dict_sheet_id = "1u4o-Cre-t5NAlwYoa6f-XTIDj8WrH05GK4ojS1y2FQA" #EDIT ME
+new_template_id = "1auJth8xuGYVLAGik5QVEGSnSpGIYlIkdZLp_Bd20D64" #EDIT ME
 
 # Define scopes for Google API
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
@@ -261,13 +263,234 @@ def update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comment
     print('\nUpdate complete. Specified terms have been updated and new terms added to the dictionary.')
     print('----------------------------------------------')
 
+def add_new_sheet_to_dict(sample_data_sheetname, list_of_terms, study_template_dict_sheet_id):
+    try:
+        # Establish connection to the Google Sheets document
+        study_sheet = client.open_by_key(study_template_dict_sheet_id)
+        sample_data_sheet = study_sheet.worksheet(sample_data_sheetname)
+        study_data_templates_sheet = study_sheet.worksheet('study-data-templates')
+
+        # Clear existing data to avoid duplicates
+        sample_data_sheet.clear()
+
+        # Set the headers with bold formatting
+        headers = ["Term", "Definition"]
+        sample_data_sheet.append_row(headers)
+        gf.format_cell_range(sample_data_sheet, 'A1:B1', gf.CellFormat(textFormat=gf.TextFormat(bold=True)))
+
+        # Fetch all data starting from row 3 (data section starts here)
+        raw_data = study_data_templates_sheet.get_all_values()[2:]  # Data starts from row 3
+
+        # Prepare the data to be inserted into the new sheet
+        data_to_insert = []
+        for term in list_of_terms:
+            for row in raw_data:
+                if row[0].strip() == term:  # Match term exactly in column A
+                    term_link = f"[{term}](https://noaa-omics-templates.readthedocs.io/en/latest/terms/sample_data/{term}.html)"
+                    definition = row[3] if len(row) > 3 else ''  # Get definition from column D, handle missing data
+                    data_to_insert.append([term_link, definition])
+                    break
+
+        # Determine the range to update
+        start_row = 2  # Start from the second row because the first row is headers
+        end_row = start_row + len(data_to_insert) - 1
+        range_to_update = f'A{start_row}:B{end_row}'
+
+        # Batch update to add all rows at once
+        sample_data_sheet.update(range_to_update, data_to_insert)
+
+        print('Update complete. New terms and definitions added to the sample data sheet.')
+
+    except Exception as e:
+        print(f"An error occurred while updating the new sheet: {e}")
+
+
+def get_color_values_of_row(new_template_id, sample_data_sheetname):
+    """
+    Reads the background colors for terms in a specified row from the data template Google Sheet,
+    processing 50 terms at a time to stay within API rate limits.
+    """
+    data_template_sheet = client.open_by_key(new_template_id).worksheet(sample_data_sheetname)
+    term_row = int(input("Enter the row number where terms are located with colors in the data template: "))
+    terms = data_template_sheet.row_values(term_row)
+    
+    term_colors = {}
+    total_terms = len(terms)
+    chunk_size = 50  # Number of terms to process in each batch (avoiding API read request limits)
+
+    omit_last_two = input("Would you like to omit the last 2 columns (typically date_modified and modified_by, for internal use (Y / N): ")
+    if omit_last_two.lower() == 'yes':
+        total_terms -= 2 #reduce count by 2 to omit last 2 columns
+
+    # Process each chunk
+    for start in range(0, total_terms, chunk_size):
+        end = start + chunk_size
+        chunk_terms = terms[start:end]
+        for i, term in enumerate(chunk_terms, start=start):
+            col_label = column_letter(i + 1)
+            cell_address = f"{col_label}{term_row}"
+            format_info = get_effective_format(data_template_sheet, cell_address)
+            bg_color = format_info.backgroundColor
+            
+            red = bg_color.red if bg_color.red is not None else 0
+            green = bg_color.green if bg_color.green is not None else 0
+            blue = bg_color.blue if bg_color.blue is not None else 0
+            color_key = f"{red:.2f}, {green:.2f}, {blue:.2f}"
+            
+            term_colors[term] = color_key
+            print(f"Term '{term}' at column {col_label} has color {color_key}")
+
+        # Wait if there are still more terms to process
+        # You will get an API Read request error for too many reads if you remove the sleep time
+        if end < total_terms:
+            print("Waiting 60 seconds before processing the next batch...")
+            time.sleep(60)  # sometimes works with as little as 35 seconds wait time...but the 'sweet spot' seems to be a minute
+
+    
+
+    print("------------------------------------")
+    print("Printing term_colors: ")
+    print(term_colors)
+    return term_colors
+
+def update_dropdown_values_from_colors(sample_data_sheetname, study_template_dict_sheet_id, term_colors):
+    """
+    Updates dropdown values in the study-data-template's new term sheet based on the term's colors in the data template
+    """
+    # Open the worksheet
+    study_template_dict_sheet = client.open_by_key(study_template_dict_sheet_id).worksheet(sample_data_sheetname)
+
+    # Define the color to requirement mapping
+    color_to_requirement = {
+        "0.57, 0.82, 0.31": "NCBI+OBIS",  # Custom green
+        "0.00, 1.00, 0.00": "NCBI+OBIS",  # Default green
+        "1.00, 0.60, 0.00": "Recommended",  # Default Orange
+        "1.00, 1.00, 0.00": "Optional"      # Default Yellow
+    }
+
+    # Insert the header in the first row, column C
+    study_template_dict_sheet.update_acell('C1', 'required_by')  # Set header directly
+
+    # Fetch all rows starting from row 2 (data starts on row 2)
+    rows = study_template_dict_sheet.get_all_values()[1:]  # Exclude header row
+
+    # Prepare updates for batch processing
+    updates = []
+
+    # Iterate over each row, extract term names, and update the dropdown
+    for i, row in enumerate(rows, start=2):  # Start at 2 because data starts from the second row
+        term_url = row[0]
+        term_name = term_url[term_url.find('[')+1:term_url.find(']')]  # Extract the term name from brackets
+
+        # Check if the term name is in the term_colors dictionary
+        if term_name in term_colors:
+            rgb_code = format_rgb_code(term_colors[term_name])  # Ensure RGB codes are formatted to match keys
+            dropdown_value = color_to_requirement.get(rgb_code, "Check Color")  # Map RGB to dropdown value or default
+            
+            # Prepare the update for this row's dropdown cell
+            updates.append({
+                "range": f"C{i}",  # Correct indexing for 1-based API and aligns directly with row numbers
+                "values": [[dropdown_value]]
+            })
+
+    # Batch update the cells if there are updates to be made
+    if updates:
+        study_template_dict_sheet.batch_update(updates)
+
+    print(f"Updated {len(updates)} dropdown values based on term colors.")
+
+def format_rgb_code(rgb_code):
+    """
+    Sanitizes RGB values received from API (truncates after 2nd decimal place for long floats) 
+    """
+    # Split and format each component to two decimal places
+    r, g, b = map(float, rgb_code.split(', '))
+    return f"{r:.2f}, {g:.2f}, {b:.2f}"
+
+def verify_data_dictionary(study_template_dict_sheet_id):
+    print('----------------------------------------------')
+    print('Verifying study data template dictionary after edits...')
+
+    # Establish connection to the Google Sheets document
+    study_sheet = client.open_by_key(study_template_dict_sheet_id)
+    study_data_templates_sheet = study_sheet.worksheet('study-data-templates')
+
+    # Fetch current data to DataFrame for easier manipulation
+    data = study_data_templates_sheet.get_all_values()
+    if len(data) < 3:
+        print("Insufficient data in the sheet.")
+        return
+
+    headers = [header.strip() for header in data[1]]  # Strip spaces from headers
+    df = pd.DataFrame(data[2:], columns=headers)  # Data starts from row 3
+
+    # Find duplicates based on the 'name' column
+    duplicate_mask = df.duplicated('name', keep=False)
+    duplicates = df[duplicate_mask]
+
+    if duplicates.empty:
+        print("No duplicates found.")
+    else:
+        print(f"Found duplicates: {duplicates['name'].tolist()}")
+
+        # Group by name to handle each set of duplicates
+        for name, group in duplicates.groupby('name'):
+            print(f"\nHandling duplicates for term: {name}")
+            rows = group.index.tolist()
+            old_idx = min(rows)  # The old entry
+            new_idx = max(rows)  # The new entry (higher row number)
+
+            # Show user duplicates and ask for action
+            print(f"Old entry 'sheet': {df.at[old_idx, 'sheet']}")
+            print(f"New entry 'sheet': {df.at[new_idx, 'sheet']}")
+            action = input("Do you want to merge these entries? (yes/no): ")
+
+            if action.lower() == 'yes':
+                # Check if 'sheet' values are different
+                if df.at[new_idx, 'sheet'] not in df.at[old_idx, 'sheet']:
+                    # Append new 'sheet' value to the old entry
+                    updated_sheets = df.at[old_idx, 'sheet'] + ' | ' + df.at[new_idx, 'sheet']
+                    df.at[old_idx, 'sheet'] = updated_sheets
+                    print(f"Updated 'sheet' for {name} at row {old_idx + 3}: {updated_sheets}")
+
+                    # Update the sheet to reflect changes
+                    updated_data = df.values.tolist()
+                    study_data_templates_sheet.update('A3', updated_data, value_input_option='USER_ENTERED')
+
+                # Delete the new duplicate row after confirming merge
+                study_data_templates_sheet.delete_rows(new_idx + 3)  # Adjusting for header rows
+                print(f"Deleted newest duplicate for {name} at row {new_idx + 3}")
+
+    print('----------------------------------------------')
+
+
 if __name__ == "__main__":
+    # Retrieve MIMARKS terms with comments
     mimarks_terms_with_comments = get_mimarks_terms(mimarks_file_path)
     sample_data_sheetname, new_MIMARKS_terms_with_comments, list_of_terms = edit_template(mimarks_terms_with_comments, new_template_id, study_template_dict_sheet_id)
+    
     print('Please check your new data template for accuracy before continuing!')
     print('If your data template is correct, update study-data-template-dict to include the new terms')
-    choice = input('Would you like to continue and update the data dictionary? (Y / N): ')
-    if choice == 'Y':
+    
+    # First check for continuation
+    choice = input('Would you like to continue and update the data dictionary? (Y / N): ').lower()
+    if choice in ['y', 'yes']:
         update_data_dictionary(sample_data_sheetname, new_MIMARKS_terms_with_comments, study_template_dict_sheet_id, list_of_terms)
-    if choice != 'Y':
-        print('Exiting program. Restore your data template to previous version in Google Sheets if you discovered errors.')
+        verify_data_dictionary(study_template_dict_sheet_id)
+    else:
+        print('Exiting program. Restore your data template to the previous version in Google Sheets if you discovered errors.')
+        sys.exit()
+    
+    print(f"If everything is correct to this point, please duplicate an existing <environment>_sample_data table in the data dictionary, and rename it to: '{sample_data_sheetname}'.")
+    choice2 = input('Have you created the new sheet and would you like to continue? (Y / N): ').lower()
+    if choice2 in ['y', 'yes']:
+        add_new_sheet_to_dict(sample_data_sheetname, list_of_terms, study_template_dict_sheet_id)
+    else:
+        print('Exiting program. Restore the Google Sheets to their previous completed version.')
+        sys.exit()
+    
+    # Getting term colors and updating dropdown values
+    print("Proceeding to update dropdown values based on term colors.")
+    term_colors = get_color_values_of_row(new_template_id, sample_data_sheetname)
+    update_dropdown_values_from_colors(sample_data_sheetname, study_template_dict_sheet_id, term_colors)
+    print("Dropdown values updated successfully.")

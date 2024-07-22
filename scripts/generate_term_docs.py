@@ -7,8 +7,8 @@ def read_excel_file(file_path):
     ws = wb.active
 
     data = {}
-    # skips the 1st 2 rows
-    r = 3
+    #skips the 1st 2 rows
+    r= 3
 
     for row in ws.iter_rows(min_row=3, values_only=True):
         if row[0] is not None:
@@ -16,11 +16,10 @@ def read_excel_file(file_path):
             hyperlink_text = row[4]
             hyperlink_target = None
             try:
-                # Check if the cell contains a hyperlink
+            # Check if the cell contains a hyperlink
                 if ws.cell(row=r, column=5).hyperlink:
                     hyperlink_target = ws.cell(row=r, column=5).hyperlink.target
-                else:
-                    hyperlink_target = None
+                else: hyperlink_target = None
             except AttributeError:
                 hyperlink_target = None
 
@@ -46,17 +45,17 @@ def write_mds(data, folder_name):
         if '|' in value['sheet']:
             sheets = value['sheet'].split(" | ")
             for s in sheets:
-                sheets_dict[s] = os.path.join(folder_name, s)
+                sheets_dict[s] = os.path.join(folder_name,s)
         else:
             sheets_dict[value['sheet']] = os.path.join(folder_name, f"{value['sheet']}")
         for s in sheets_dict.keys():
             if not os.path.exists(sheets_dict[s]):
                 os.makedirs(sheets_dict[s])
             file_name = os.path.join(sheets_dict[s], f"{key}.md")
-            with open(file_name, 'w') as file:
+            with open(file_name, 'w', encoding="utf-8") as file: #Had to add utf-8 encoding to prevent codec errors...did I change something?
                 file.write(f"# Term: {key}\n\n")
                 file.write(f"*{value['definition']}*\n\n")
-                if value['origin_link'] is None:
+                if value['origin_link'] == None:
                     file.write(f"Origin: {value['origin_text']}\n\n")
                 else:
                     file.write(f"Origin: [{value['origin_text']}]({value['origin_link']})\n\n")
@@ -73,12 +72,23 @@ def write_mds(data, folder_name):
                 elif value['required_by'] == 'OBIS':
                     file.write("**Required by OBIS**")
 
+
+# New main section of the code builds path name without any user input
+# if __name__ == "__main__":
+#     if len(sys.argv) != 3:
+#         print("Usage: python generate_term_docs.py <file_path> <output_folder>")
+#     else:
+#         file_path = sys.argv[1]
+#         folder_name = sys.argv[2]
+#         data_dict = read_excel_file(file_path)
+#         write_mds(data_dict, folder_name)
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python generate_term_docs.py <output_folder>")
-    else:
-        folder_name = sys.argv[1]
-        # Construct the path to the study-data-template-dict.xlsx file
-        file_path = os.path.join(os.path.dirname(__file__), '..', 'script-dependencies', 'study-data-template-dict.xlsx')
-        data_dict = read_excel_file(file_path)
-        write_mds(data_dict, folder_name)
+    print("Starting generate_term_docs.py script...")
+    
+    folder_name = os.path.join(os.path.dirname(__file__), '..', 'docs', 'terms')
+    # Construct the path to the study-data-template-dict.xlsx file
+    data_dict_filename = 'sediment-practice-study-data-template-dict.xlsx' #EDIT ME
+    file_path = os.path.join(os.path.dirname(__file__), '..', 'script-dependencies', data_dict_filename)
+    data_dict = read_excel_file(file_path)
+    write_mds(data_dict, folder_name)
