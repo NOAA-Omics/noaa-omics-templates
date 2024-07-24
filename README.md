@@ -1,6 +1,9 @@
+# ATTENTION: This branch is legacy code.
+This code was written for Version 1 of the data templates. Those templates have since changed, and the scripts are now maintained on the 'main' branch, using Version 2 of the data templates.
+
 # NOAA Omics Study Data Templates
 
-This project is actively under development. Reach out to bayden.willms@noaa.gov for questions.
+Reach out to bayden.willms@noaa.gov for questions.
 
 ## Overview of Scripts
 
