@@ -319,7 +319,7 @@ def get_color_values_of_row(new_template_id, sample_data_sheetname):
     chunk_size = 50  # Number of terms to process in each batch (avoiding API read request limits)
 
     omit_last_two = input("Would you like to omit the last 2 columns (typically date_modified and modified_by, for internal use (Y / N): ")
-    if omit_last_two.lower() == 'yes':
+    if omit_last_two.lower() == 'yes' or 'y':
         total_terms -= 2 #reduce count by 2 to omit last 2 columns
 
     # Process each chunk
