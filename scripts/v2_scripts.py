@@ -53,23 +53,61 @@ term_colors = None
 
 #--------------------------------- FUNCTIONS ---------------------------------#
 
-def get_terms_row_GS(google_sheet_id, sheet_name, row_num, as_dict=False):
+def get_terms_row_GS(google_sheet_id, sheet_name, row_num, as_dict=False, batch_size=10, max_batches=10):
     sheet = client.open_by_key(google_sheet_id).worksheet(sheet_name)
     terms = sheet.row_values(row_num)
+    
     if as_dict:
-        data = sheet.row_values(row_num + 1)
-        terms_dict = {term: data[idx] if idx < len(data) else None for idx, term in enumerate(terms)}
-        return terms_dict
+        terms_dict = {}
+        empty_columns = []
+
+        for idx, term in enumerate(terms):
+            data = None
+            for batch in range(max_batches):
+                # Calculate the range to fetch (fixing the redundant sheet name issue)
+                start_row = row_num + 1 + batch * batch_size
+                end_row = start_row + batch_size - 1
+                col_letter = gspread.utils.rowcol_to_a1(1, idx + 1)[0]
+                range_to_fetch = f"{col_letter}{start_row}:{col_letter}{end_row}"
+                
+                # Get the batch of data for the column
+                all_data = sheet.batch_get([range_to_fetch])[0]
+
+                # Check for the first non-null value in the batch
+                for value in all_data:
+                    if value and value[0] not in [None, '']:
+                        data = value[0]
+                        break
+                
+                if data is not None:
+                    break
+            
+            if data in [None, '']:
+                data = None  # Standardize empty values to None
+                empty_columns.append(term)
+            terms_dict[term] = data
+        return terms_dict, empty_columns
     return terms
 
 def get_terms_row_X(excel_filename, row_num, as_dict=False):
     wb = load_workbook(excel_filename, data_only=True)
     ws = wb.active
     terms = [ws.cell(row=row_num, column=col).value for col in range(1, ws.max_column + 1)]
+    empty_columns = []
     if as_dict:
-        data = [ws.cell(row=row_num + 1, column=col).value for col in range(1, ws.max_column + 1)]
-        terms_dict = {term: data[idx] if idx < len(data) else None for idx, term in enumerate(terms)}
-        return terms_dict
+        terms_dict = {}
+        for col, term in enumerate(terms, start=1):
+            data = None
+            for row in range(row_num + 1, ws.max_row + 1):
+                value = ws.cell(row=row, column=col).value
+                if value not in [None, '']:
+                    data = value
+                    break
+            if data in [None, '']:
+                data = None  # Standardize empty values to None
+                empty_columns.append(term)
+            terms_dict[term] = data
+        return terms_dict, empty_columns
     return terms
 
 def get_terms_column_GS(google_sheet_id, sheet_name, col_num):
@@ -120,7 +158,7 @@ def main():
             google_sheet_id = int(input("To read the first Google Sheet, enter '1', for the 2nd one, enter '2': "))
             sheet_name = input('Enter the sheet name: ').strip()
             row_num = int(input('Enter the row number of the terms: '))
-            as_dict = input('Do you want the terms as a dictionary with the first piece of data? (yes/no): ').strip().lower() == 'yes' | 'y'
+            as_dict = input('Do you want the terms as a dictionary with the first piece of data? (yes/no): ').strip().lower() == 'yes' or 'y'
             if google_sheet_id == 1:
                 google_sheet_id_1_terms = get_terms_row_GS(google_sheet_id_1, sheet_name, row_num, as_dict=as_dict)
                 print(f"\nTerms from Google Sheet {google_sheet_id_1} (Sheet: {sheet_name}, Row: {row_num}):")
@@ -149,7 +187,7 @@ def main():
 
         elif user_input == '3':
             row_num = int(input('Enter the row number of the terms in the Excel file: '))
-            as_dict = input('Do you want the terms as a dictionary with the first piece of data? (yes/no): ').strip().lower() == 'yes' | 'y'
+            as_dict = input('Do you want the terms as a dictionary with the first piece of data? (yes/no): ').strip().lower() == 'yes' or 'y'
             mimarks_terms_with_comments = get_terms_row_X(excel_file_path, row_num, as_dict=as_dict)
             print(f"\nTerms from Excel file {excel_filename} (Row: {row_num}):")
             print(mimarks_terms_with_comments)
