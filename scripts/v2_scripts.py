@@ -56,44 +56,33 @@ term_colors = None
 def get_terms_row_GS(google_sheet_id, sheet_name, row_num, as_dict=False, batch_size=10, max_batches=10):
     sheet = client.open_by_key(google_sheet_id).worksheet(sheet_name)
     terms = sheet.row_values(row_num)
-    
+
     if as_dict:
         terms_dict = {}
-        empty_columns = []
 
+        # Iterate over each term (column header)
         for idx, term in enumerate(terms):
             data = None
-            for batch in range(max_batches):
-                # Calculate the range to fetch (fixing the redundant sheet name issue)
-                start_row = row_num + 1 + batch * batch_size
-                end_row = start_row + batch_size - 1
-                col_letter = gspread.utils.rowcol_to_a1(1, idx + 1)[0]
-                range_to_fetch = f"{col_letter}{start_row}:{col_letter}{end_row}"
-                
-                # Get the batch of data for the column
-                all_data = sheet.batch_get([range_to_fetch])[0]
+            col_values = sheet.col_values(idx + 1)  # Fetch all values in the column
 
-                # Check for the first non-null value in the batch
-                for value in all_data:
-                    if value and value[0] not in [None, '']:
-                        data = value[0]
-                        break
-                
-                if data is not None:
+            # Start looking from the row right after the header (row_num + 1)
+            for value in col_values[row_num:]:
+                if value not in [None, '']:
+                    data = value
                     break
-            
-            if data in [None, '']:
-                data = None  # Standardize empty values to None
-                empty_columns.append(term)
-            terms_dict[term] = data
-        return terms_dict, empty_columns
+
+            # If no data found, set to 'None'
+            terms_dict[term] = data if data is not None else None
+
+        return terms_dict
     return terms
+
 
 def get_terms_row_X(excel_filename, row_num, as_dict=False):
     wb = load_workbook(excel_filename, data_only=True)
     ws = wb.active
     terms = [ws.cell(row=row_num, column=col).value for col in range(1, ws.max_column + 1)]
-    empty_columns = []
+    
     if as_dict:
         terms_dict = {}
         for col, term in enumerate(terms, start=1):
@@ -103,11 +92,9 @@ def get_terms_row_X(excel_filename, row_num, as_dict=False):
                 if value not in [None, '']:
                     data = value
                     break
-            if data in [None, '']:
-                data = None  # Standardize empty values to None
-                empty_columns.append(term)
-            terms_dict[term] = data
-        return terms_dict, empty_columns
+            terms_dict[term] = data  # Ensure all terms are added to the dictionary, even if data is None
+        
+        return terms_dict  # Returning only the dictionary without empty_columns list
     return terms
 
 def get_terms_column_GS(google_sheet_id, sheet_name, col_num):
